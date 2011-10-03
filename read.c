@@ -170,10 +170,18 @@ unsigned char gettoken(void)
         cnt = 0;
         yytok = NUMBERTOK;               /* we can be optimist and think it
                                           * will be a number. */
-        while (isspace(ch = readchar())) /* skip blanks */
-                ;
-        if (ch == EOF)
-                return EOFTOK;
+        for (;;) {
+                while (isspace(ch = readchar())) /* skip blanks */
+                        ;
+                if (ch == EOF)
+                        return EOFTOK;
+                if (ch == ';') {                 /* skip comments */
+                        while ((ch = readchar()) != '\n' && ch != EOF)
+                                ;       /* nothing */
+                        continue;
+                }
+                break;
+        }
         if (!isprint(ch))      /* non printable character, ERROR!!! */
                 return ERRORTOK;
         if (strchr("()'\\[]\".#", ch))  /* non atom. */
