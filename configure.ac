@@ -1,0 +1,13 @@
+AC_INIT([kemacs], [1.0], [k0ga@shike2.com])
+AC_PROG_CC
+AC_CHECK_FUNCS([strchr])
+AC_CHECK_FUNCS([strdup])
+AC_CHECK_HEADERS([stddef.h])
+AC_CHECK_HEADERS([stdlib.h])
+AC_CHECK_HEADERS([string.h])
+AC_FUNC_ERROR_AT_LINE
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_PREREQ
+AC_CONFIG_HEADERS([config.h Makefile])
+AC_OUTPUT
