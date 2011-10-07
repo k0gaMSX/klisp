@@ -33,7 +33,11 @@
  */
 static l_object listp(register l_object obj)
 {
-        for ( ; !CONSP(obj); obj = XCDR(obj)) {
+	if (NILP(obj))
+		return tee;
+	if (ATOM(obj))
+		return nil;
+        for ( ; CONSP(obj); obj = XCDR(obj)) {
                 if (!SYMBOLP(XCAR(obj)))
                         return nil;
         }
