@@ -92,9 +92,10 @@ void out_of_memory(void)
 }
 
 
-void syntax_error(void)
+void syntax_error(const char *msg)
 {
-        fprintf(stderr, "Syntax error\n");
+	fprintf(stderr, "Syntax error:%s\n", msg);
         longjmp(catch_error, 1);
 }
+
 /* TODO: Change fprintf to error(..) */
