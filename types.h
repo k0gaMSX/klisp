@@ -24,6 +24,7 @@
 
 
 typedef unsigned long l_object;
+typedef long l_sobject;
 #define L_OBJECT_BITS (sizeof(l_object) * 8)
 #define UPPERBYTE(x)  ((unsigned char) ((l_object) (x) >> (L_OBJECT_BITS - 8)))
 #define TO_UPPERBYTE(x) ((l_object) (x) << (L_OBJECT_BITS - 8))

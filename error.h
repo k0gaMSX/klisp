@@ -22,13 +22,14 @@
 #include "types.h"
 
 void out_of_memory(void);
-void syntax_error(void);
+void syntax_error(const char *msg);
 void unbound_variable(l_object var);
 void wrong_type_argument(char *type);
 void huge_list_error(void);
 void void_function_error(void);
 void wrong_number_arguments(void);
 void end_of_file(void);
+extern void negative_number(void);
 #endif /* ERROR_H_ */
 
 

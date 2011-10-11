@@ -52,6 +52,13 @@ void wrong_number_arguments(void)
         longjmp(catch_error, 1);
 }
 
+void negative_number(void)
+{
+	fprintf(stderr, "negative numbers are non supported\n");
+	longjmp(catch_error, 1);
+}
+
+
 void void_function_error(void)
 {
         fprintf(stderr, "void-function error\n");

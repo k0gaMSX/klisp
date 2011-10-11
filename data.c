@@ -290,18 +290,21 @@ static l_object product(register l_object *args, unsigned char numargs)
  */
 static l_object minus(register l_object *args, unsigned char numargs)
 {
-        register l_object cnt = 0;
+        register l_sobject cnt = 0;
 
-        if (numargs == 0)
-                goto return_rest;
+        if (numargs < 2)
+		wrong_number_arguments();
+	if (!INTEGERP(*args))
+		wrong_type_argument("integer");
 
-        for (cnt = *args++; --numargs; --args) {
+        for (cnt = XINT(*args--) ; --numargs; --args) {
                 if (!INTEGERP(*args))
                     wrong_type_argument("integer");
                 cnt -= XINT(*args);
         }
 
-return_rest:
+	if (cnt < 0)
+		negative_number();
         /* TODO: We can't represent negative numbers!!!! */
         return MAKE_INT(cnt);
 }
