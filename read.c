@@ -174,7 +174,7 @@ unsigned char gettoken(void)
                 while (isspace(ch = readchar())) /* skip blanks */
                         ;
                 if (ch == EOF)
-                        return EOFTOK;
+                        return yytok = EOFTOK;
                 if (ch == ';') {                 /* skip comments */
                         while ((ch = readchar()) != '\n' && ch != EOF)
                                 ;       /* nothing */
@@ -183,7 +183,7 @@ unsigned char gettoken(void)
                 break;
         }
         if (!isprint(ch))      /* non printable character, ERROR!!! */
-                return ERRORTOK;
+                return yytok = ERRORTOK;
         if (strchr("()'\\[]\".#", ch))  /* non atom. */
                 return yytok = ch;
 
@@ -191,7 +191,7 @@ unsigned char gettoken(void)
         /* begin an atom */
         for (;;) {
                 if (cnt == IOBUF_SIZE)             /* atom bigger, ERROR!!!! */
-                        return ERRORTOK;
+                        return yytok = ERRORTOK;
 
                 yylex[cnt++] = tolower(ch);
                 if (!isdigit(ch))                  /* at least there is a */
@@ -252,7 +252,8 @@ static l_object readobj(char *dot)
                 return cons(quote, cons(readobj(dot), nil));
         case NUMBERTOK:
                 return MAKE_INT(atoi(yylex));
-
+	case EOFTOK:
+		eof_while_parsing();
         case STRINGTOK:
         case '\\':
         case '.':
@@ -260,7 +261,7 @@ static l_object readobj(char *dot)
                 return nil;
         }
 
-        syntax_error();
+        syntax_error("invalid token");
         return nil;             /* Never reached */
 }
 

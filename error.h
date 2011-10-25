@@ -30,6 +30,7 @@ void void_function_error(void);
 void wrong_number_arguments(void);
 void end_of_file(void);
 extern void negative_number(void);
+extern void eof_while_parsing(void);
 #endif /* ERROR_H_ */
 
 

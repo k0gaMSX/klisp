@@ -46,6 +46,12 @@ void end_of_file(void)
         longjmp(catch_error, 2);
 }
 
+void eof_while_parsing(void)
+{
+        fprintf(stderr, "End of file during parsing\n");
+        longjmp(catch_error, 1);
+}
+
 void wrong_number_arguments(void)
 {
         fprintf(stderr, "Wrong number of arguments\n");
