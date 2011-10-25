@@ -216,32 +216,42 @@ unsigned char gettoken(void)
 static l_object read_stream;    /* stream used by read functions */
 
 
-static l_object readobj(char *dot);
+static l_object readobj();
 
 static l_object readlist(void)
 {
         l_object first, prev, cur;
-        char dot = 0;
 
-        if (gettoken() == ')')
-                return nil;
+	switch (gettoken()) {
+	case ')':
+		return nil;
+	case '.':
+		first = readobj();
+		if (gettoken() != ')')
+			syntax_error(". in wrong context");
+		return first;
+	default:
+		first = cons(readobj(), nil);
 
-        first = cons(readobj(&dot), nil);
-
-        for (prev = first; gettoken() != ')'; prev = cur) {
-                cur = cons(readobj(&dot), nil);
-                XCDR(prev) = cur;
-        }
-
+		for (prev = first; gettoken() != ')'; prev = cur) {
+			if (yytok == '.') {
+				gettoken();
+				XCDR(prev) = readobj();
+				if (gettoken() != ')')
+					syntax_error(". in wrong context");
+				break;
+ 			}
+			cur = cons(readobj(), nil);
+			XCDR(prev) = cur;
+		}
         return first;
+	}
 }
 
 
 
-static l_object readobj(char *dot)
+static l_object readobj()
 {
-        assert(dot);
-
         switch (yytok) {
         case '(':
                 return readlist();
@@ -249,15 +259,13 @@ static l_object readobj(char *dot)
                 return MAKE_PTR(intern(yylex));
         case '\'':
                 gettoken();
-                return cons(quote, cons(readobj(dot), nil));
+                return cons(quote, cons(readobj(), nil));
         case NUMBERTOK:
                 return MAKE_INT(atoi(yylex));
 	case EOFTOK:
 		eof_while_parsing();
         case STRINGTOK:
         case '\\':
-        case '.':
-                *dot = 1;
                 return nil;
         }
 
@@ -270,11 +278,10 @@ static l_object readobj(char *dot)
 /* Read an object lisp as text from stream */
 l_object read(l_object stream)
 {
-        char dot;
         read_stream = stream;
 
         if (gettoken() == EOFTOK)
                 end_of_file();
 
-        return readobj(&dot);
+        return readobj();
 }
