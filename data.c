@@ -382,7 +382,6 @@ static struct l_builtin functions [] = {
         DEFUN(NULL, NULL, 0, 0)
 };
 
-#include <stdio.h>
 
 void initsyms(void)
 {
