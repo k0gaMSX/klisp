@@ -25,7 +25,7 @@
 
 #include "error.h"
 #include "lisp.h"
-
+#include "defun.h"
 
 
 enum tokens {
@@ -284,4 +284,29 @@ l_object read(l_object stream)
                 end_of_file();
 
         return readobj();
+}
+
+
+
+void initfuncs(struct l_builtin *fp)
+{
+        for (; fp->name; ++fp) {
+                static l_symbol *sym;
+                sym = intern_static(fp->name);
+                sym->fbound.type = fp->type;
+                memcpy(&sym->fbound.u.cfun, &fp->cfun, sizeof(fp->cfun));
+        }
+}
+
+
+
+
+void initglobals(void)
+{
+        nil = MAKE_PTR(intern_static("nil"));
+        tee = MAKE_PTR(intern_static("t"));
+        XSYMBOL(tee)->bound = tee;
+        XSYMBOL(nil)->bound = nil;
+
+        quote = MAKE_PTR(intern_static("quote"));
 }

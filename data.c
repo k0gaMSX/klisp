@@ -354,7 +354,7 @@ static l_object plus1(register l_object obj)
 
 
 
-static struct l_builtin functions [] = {
+struct l_builtin data_funs[] = {
         DEFMACRO("quote", fquote, 1, 1),
         DEFUN("cons", cons, 2, 2),
         DEFUN("+", plus, 0, MANY),
@@ -383,21 +383,4 @@ static struct l_builtin functions [] = {
 };
 
 
-void initsyms(void)
-{
-        static struct l_builtin *bp;
 
-        nil = MAKE_PTR(intern_static("nil"));
-        tee = MAKE_PTR(intern_static("t"));
-        XSYMBOL(tee)->bound = tee;
-        XSYMBOL(nil)->bound = nil;
-
-        for (bp = functions; bp->name; ++bp) {
-                static l_symbol *sym;
-                sym = intern_static(bp->name);
-                sym->fbound.type = bp->type;
-                memcpy(&sym->fbound.u.cfun, &bp->cfun, sizeof(bp->cfun));
-        }
-
-        quote = MAKE_PTR(intern_static("quote"));
-}

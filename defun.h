@@ -44,4 +44,7 @@ struct l_builtin {
 #define DEFUN_3(x) ((l_object (*)(l_object, l_object, l_object)) x)
 #define DEFUN_MANY(x) ((l_object (*)(l_object *, unsigned char)) x)
 
+extern void initfuncs(struct l_builtin *fp);
+extern void initglobals(void);
+
 #endif /* DEFUN_H_ */

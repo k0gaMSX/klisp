@@ -19,17 +19,20 @@
 #include <stdlib.h>
 
 #include "lisp.h"
+#include "defun.h"
 
 /* TODO: change magic numbers by defines */
 
+extern struct l_builtin data_funs[];
+
 int main(int argc, char *argv[])
 {
-        extern void initsyms(void);
         extern jmp_buf catch_error;
 
         switch (setjmp(catch_error)) { /* set return point for errors */
         case 0:                        /* handling */
-                initsyms();            /* sequential case (setjmp call) */
+                initglobals();         /* sequential case (setjmp call) */
+		initfuncs(data_funs); 
                 break;
         case 1:                        /* error calling */
                 return EXIT_FAILURE;
