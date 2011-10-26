@@ -104,6 +104,6 @@ extern l_object eval(l_object obj);
 extern l_object fquote(l_object obj);
 
 extern l_symbol *make_symbol(const char *name);
-l_symbol *intern_static(const char *name);
-l_symbol *intern(const char *name);
+extern l_symbol *intern_static(const char *name);
+extern l_symbol *intern(const char *name);
 #endif
