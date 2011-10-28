@@ -167,10 +167,31 @@ l_object eval(l_object obj)
 }
 
 
+/***********************************************************/
+/* block operators                                         */
+/***********************************************************/
+/*
+ * progn is a special form
+ *
+ * (progn BODY...)
+ *
+ *Eval BODY forms sequentially and return value of last one.
+ */
+static l_object progn(l_object *args, unsigned char numargs)
+{
+	l_object r = nil;
+
+	while (numargs--)
+		r = eval(*args--);
+	return r;
+}
+
+
+
+
 /********************************************************/
 /* Logic operators */
 /********************************************************/
-
 /*
  * or is a special form
  *
@@ -221,6 +242,7 @@ and_fun(register l_object *args, unsigned char numargs)
 
 
 struct l_builtin eval_funs[] = {
+        DEFMACRO("progn", progn, 0, MANY),
         DEFMACRO("or", or_fun, 0, MANY),
 	DEFMACRO("and", and_fun, 0, MANY),
 	DEFUN(NULL, NULL, 0, 0)
