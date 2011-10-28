@@ -165,3 +165,38 @@ l_object eval(l_object obj)
         abort();
         return nil;             /* never reached */
 }
+
+
+/********************************************************/
+/* Logic operators */
+/********************************************************/
+
+/*
+ * and is a special form
+ *
+ * (and CONDITIONS...)
+ *
+ * Eval args until one of them yields nil, then return nil.
+ * The remaining args are not evalled at all.
+ * If no arg yields nil, return the last arg's value.
+ *
+ */
+static l_object
+and_fun(register l_object *args, unsigned char numargs)
+{
+	register l_object r = tee;
+
+	while (numargs--) {
+		r = eval(*args--);
+		if (NILP(r))
+			break;
+	}
+	return r;
+}
+
+
+
+struct l_builtin eval_funs[] = {
+	DEFMACRO("and", and_fun, 0, MANY),
+	DEFUN(NULL, NULL, 0, 0)
+};

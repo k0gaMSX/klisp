@@ -24,6 +24,8 @@
 /* TODO: change magic numbers by defines */
 
 extern struct l_builtin data_funs[];
+extern struct l_builtin eval_funs[];
+
 
 int main(int argc, char *argv[])
 {
@@ -32,7 +34,8 @@ int main(int argc, char *argv[])
         switch (setjmp(catch_error)) { /* set return point for errors */
         case 0:                        /* handling */
                 initglobals();         /* sequential case (setjmp call) */
-		initfuncs(data_funs); 
+		initfuncs(data_funs);
+		initfuncs(eval_funs);
                 break;
         case 1:                        /* error calling */
                 return EXIT_FAILURE;
