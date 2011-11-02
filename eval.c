@@ -200,6 +200,37 @@ static l_object prog_list(register l_object list)
 
 
 
+/*
+ * cond is a special form
+ *
+ * (cond CLAUSES...)
+ *
+ * Try each clause until one succeeds.
+ * Each clause looks like (CONDITION BODY...).  CONDITION is evaluated
+ * and, if the value is non-nil, this clause succeeds:
+ * then the expressions in BODY are evaluated and the last one's
+ * value is the value of the cond-form.
+ * If no clause succeeds, cond returns nil.
+ * If a clause has one element, as in (CONDITION),
+ * CONDITION's value if non-nil is returned from the cond-form.
+ */
+static l_object cond(l_object *args, unsigned char numargs)
+{
+	l_object r = nil;	/* returned value */
+
+	while (numargs--) {
+		register l_object clause = *args--;
+
+		if (NILP(clause)) continue;
+		if (!CONSP(clause)) {
+			wrong_type_argument("list");
+		} else if (!NILP(eval(XCAR(clause)))) {
+			r = prog_list(clause);
+			break;
+		}
+	}
+	return r;
+}
 
 
 
@@ -257,6 +288,7 @@ and_fun(register l_object *args, unsigned char numargs)
 
 struct l_builtin eval_funs[] = {
         DEFMACRO("progn", progn, 0, MANY),
+        DEFMACRO("cond", cond, 0, MANY),
         DEFMACRO("or", or_fun, 0, MANY),
 	DEFMACRO("and", and_fun, 0, MANY),
 	DEFUN(NULL, NULL, 0, 0)
