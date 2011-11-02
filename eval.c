@@ -186,6 +186,20 @@ static l_object progn(l_object *args, unsigned char numargs)
 	return r;
 }
 
+static l_object prog_list(register l_object list)
+{
+	l_object r;
+
+	assert(LISTP(list));
+
+	for (r = nil; CONSP(list); list = XCDR(list))
+		r = eval(XCAR(list));
+	return r;
+}
+
+
+
+
 
 
 
