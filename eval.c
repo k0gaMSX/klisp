@@ -166,6 +166,59 @@ l_object eval(l_object obj)
         return nil;             /* never reached */
 }
 
+
+
+
+
+l_object assign(register l_object sym, register l_object var)
+{
+	assert(SYMBOLP(sym));
+	if (!SYMBOLP(var))
+		XBOUND(sym) = var;
+	else if (BOUNDP(sym))
+		XBOUND(sym) = XBOUND(var);
+	else
+		unbound_variable(var);
+
+	/* TODO: Deal with functional values */
+	return sym;
+}
+
+/*
+ * defvar is a special form
+ *
+ * (defvar SYMBOL &optional INITVALUE)
+ *
+ * Define SYMBOL as a variable, and return SYMBOL.
+ * You are not required to define a variable in order to use it,
+ * but the definition can supply documentation and an initial value
+ * in a way that tags can recognize.
+ *
+ * INITVALUE is evaluated, and used to set SYMBOL, only if SYMBOL's
+ * value is void.
+ * INITVALUE is optional.
+ * If INITVALUE is missing, SYMBOL's value is not set.
+ *
+ * If SYMBOL has a local binding, then this form affects the local
+ * binding.  This is usually not what you want.
+ */
+
+l_object defvar(l_object *args, register unsigned char numargs)
+{
+	register l_object name;
+
+	if (numargs == 0 || numargs > 2)
+		wrong_number_arguments();
+	name = *args--;
+	if (!SYMBOLP(name))
+		wrong_type_argument("symbol");
+	else if (numargs == 2 && !BOUNDP(name))
+		assign(name, eval(*args));
+
+	return name;
+}
+
+
 
 /***********************************************************/
 /* block operators                                         */
@@ -291,5 +344,6 @@ struct l_builtin eval_funs[] = {
         DEFMACRO("cond", cond, 0, MANY),
         DEFMACRO("or", or_fun, 0, MANY),
 	DEFMACRO("and", and_fun, 0, MANY),
+	DEFMACRO("defvar", defvar, 0, MANY),
 	DEFUN(NULL, NULL, 0, 0)
 };
