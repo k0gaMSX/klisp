@@ -177,7 +177,7 @@ l_object eval(l_object obj)
 
 
 
-l_object assign(register l_object sym, register l_object var)
+static l_object assign(register l_object sym, register l_object var)
 {
 	assert(SYMBOLP(sym));
 	if (!SYMBOLP(var))
@@ -187,7 +187,6 @@ l_object assign(register l_object sym, register l_object var)
 	else
 		unbound_variable(var);
 
-	/* TODO: Deal with functional values */
 	return sym;
 }
 
@@ -210,7 +209,7 @@ l_object assign(register l_object sym, register l_object var)
  * binding.  This is usually not what you want.
  */
 
-l_object defvar(l_object *args, register unsigned char numargs)
+static l_object defvar(l_object *args, register unsigned char numargs)
 {
 	register l_object name;
 
