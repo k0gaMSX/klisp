@@ -190,6 +190,38 @@ static l_object assign(register l_object sym, register l_object var)
 	return sym;
 }
 
+
+/*
+ * setq is a special form
+ *
+ * (setq [SYM VAL]...)
+ *
+ * Set each SYM to the value of its VAL.
+ * The symbols SYM are variables; they are literal (not evaluated).
+ * The values VAL are expressions; they are evaluated.
+ * Thus, (setq x (1+ y)) sets `x' to the value of `(1+ y)'.
+ * The second VAL is not computed until after the first SYM is set, and so on;
+ * each VAL can use the new value of variables set earlier in the `setq'.
+ * The return value of the `setq' form is the value of the last VAL.
+ */
+
+static l_object setq(register l_object *args, unsigned char numargs)
+{
+	register l_object sym, val = nil;
+
+	if (numargs & 1)
+		wrong_number_arguments();
+	do {
+		sym = *args--;
+		if (!SYMBOLP(sym))
+			wrong_type_argument("symbol");
+		val = eval(*args--);
+		assign(sym, val);
+	} while (numargs -= 2);
+
+	return val;
+}
+
 /*
  * defvar is a special form
  *
@@ -351,5 +383,6 @@ struct l_builtin eval_funs[] = {
         DEFMACRO("or", or_fun, 0, MANY),
 	DEFMACRO("and", and_fun, 0, MANY),
 	DEFMACRO("defvar", defvar, 0, MANY),
+	DEFMACRO("setq", setq, 0, MANY),
 	DEFUN(NULL, NULL, 0, 0)
 };
