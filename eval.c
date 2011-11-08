@@ -147,6 +147,13 @@ funcall:
 }
 
 
+/*
+ * eval is a built-in function
+ *
+ * (eval FORM)
+ *
+ * Evaluate FORM and return its value.
+ */
 l_object eval(l_object obj)
 {
         if (NILP(obj)) {
