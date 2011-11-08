@@ -176,21 +176,6 @@ l_object eval(l_object obj)
 
 
 
-
-static l_object assign(register l_object sym, register l_object var)
-{
-	assert(SYMBOLP(sym));
-	if (!SYMBOLP(var))
-		XBOUND(sym) = var;
-	else if (BOUNDP(sym))
-		XBOUND(sym) = XBOUND(var);
-	else
-		unbound_variable(var);
-
-	return sym;
-}
-
-
 /*
  * setq is a special form
  *
@@ -215,8 +200,7 @@ static l_object setq(register l_object *args, unsigned char numargs)
 		sym = *args--;
 		if (!SYMBOLP(sym))
 			wrong_type_argument("symbol");
-		val = eval(*args--);
-		assign(sym, val);
+		XBOUND(sym) = val = eval(*args--);
 	} while (numargs -= 2);
 
 	return val;
@@ -251,7 +235,7 @@ static l_object defvar(l_object *args, register unsigned char numargs)
 	if (!SYMBOLP(name))
 		wrong_type_argument("symbol");
 	else if (numargs == 2 && !BOUNDP(name))
-		assign(name, eval(*args));
+		XBOUND(name) = eval(*args);
 
 	return name;
 }
