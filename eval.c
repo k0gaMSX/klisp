@@ -276,6 +276,30 @@ static l_object prog_list(register l_object list)
 
 
 /*
+ * while is a special form in `C source code'.
+ *
+ * (while TEST BODY...)
+ *
+ * If TEST yields non-nil, eval BODY... and repeat.
+ * The order of execution is thus TEST, BODY, TEST, BODY and so on
+ * until TEST returns nil.
+ *
+ */
+
+static l_object while_fun(l_object *args, unsigned char numargs)
+{
+	register l_object test;
+	l_object r = nil;
+
+	if (numargs-- == 0)
+		wrong_number_arguments();
+	test = *args--;
+	while (!NILP(eval(test)))
+		r = progn(args, numargs);
+	return r;
+}
+
+/*
  * cond is a special form
  *
  * (cond CLAUSES...)
@@ -362,6 +386,7 @@ and_fun(register l_object *args, unsigned char numargs)
 
 
 struct l_builtin eval_funs[] = {
+        DEFMACRO("while", while_fun, 0, MANY),
         DEFMACRO("progn", progn, 0, MANY),
         DEFMACRO("cond", cond, 0, MANY),
         DEFMACRO("or", or_fun, 0, MANY),
