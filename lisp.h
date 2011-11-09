@@ -52,6 +52,7 @@
 #define INT_TYPE     0x80
 #define CONS_TYPE    0xc0
 
+#define NO_VALUE     ((l_object) -1)
 
 #define XPTR(x)      ((unsigned char *) ((l_object) (x) << 1))
 #define MAKE_PTR(x)   ((l_object) (x) >> 1)
@@ -61,7 +62,7 @@
 #define XPTYPE(x)    (*XPTR(x))
 #define XINT(x)      ((x) & INT_MASK)
 #define XCONS(x)     (cons_array[(x) & CONS_MASK])
-#define XSTRING(x)   (XPTR(x) + 1)
+#define XSTRING(x)   ((char *) XPTR(x) + 1)
 #define XSYMBOL(x)   ((l_symbol *) XPTR(x))
 #define XCHAR(x)     ((x) & CHAR_MASK)
 #define XCAR(x)      (XCONS(x).car)
@@ -91,7 +92,7 @@
 #define XFBOUND(x)  (&XSYMBOL(x)->fbound)
 #define XBOUND(x)   (XSYMBOL(x)->bound)
 #define FBOUNDP(x)  (XFBOUND(x)->type != FBOUND_NO)
-#define BOUNDP(x)   (!EQ(XBOUND(x), nil))
+#define BOUNDP(x)   (!EQ(XBOUND(x), NO_VALUE))
 
 extern l_object nil, tee, quote;
 extern l_cons cons_array[];

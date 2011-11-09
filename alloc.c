@@ -57,7 +57,7 @@ l_symbol *make_symbol(const char *name)
         symp->type = SYM_PTYPE;
         symp->name = name;
         symp->hash = NULL;
-        symp->bound = nil;
+        symp->bound = NO_VALUE;
         symp->fbound.type = FBOUND_NO;
 
         return symp;
