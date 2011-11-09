@@ -24,6 +24,18 @@
 
 /************************************************************************/
 /* Type predicates*/
+/*
+ * consp is a built-in function
+ *
+ * (consp OBJECT)
+ *
+ * Return t if OBJECT is a cons cell.
+ */
+static l_object consp(register l_object obj)
+{
+	return CONSP(obj) ? tee : nil;
+}
+
 
 /*
  * (listp OBJECT)
@@ -373,6 +385,7 @@ struct l_builtin data_funs[] = {
         DEFUN("<=", cmp_le, 2, 2),
         DEFUN(">", cmp_gt, 2, 2),
         DEFUN("<", cmp_lt, 2, 2),
+	DEFUN("consp", consp, 1, 1),
         DEFUN("listp", listp, 1, 1),
         DEFUN("numberp", numberp, 1, 1),
         DEFUN("symbolp", symbolp, 1, 1),
