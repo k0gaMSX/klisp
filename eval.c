@@ -265,7 +265,7 @@ static l_object prog_list(register l_object list)
 {
 	l_object r;
 
-	assert(LISTP(list));
+	assert(NILP(list) || CONSP(list));
 
 	for (r = nil; CONSP(list); list = XCDR(list))
 		r = eval(XCAR(list));

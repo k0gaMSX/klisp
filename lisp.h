@@ -76,7 +76,6 @@
 #define STRINGP(x)   TYPEP(x, STR_PTYPE)
 #define VECTORP(x)   TYPEP(x, VEC_PTYPE)
 #define NILP(x)      ((x) == nil)
-#define LISTP(x)     (NILP(x) || CONSP(x))
 #define ATOM(x)      (!CONSP(x))
 
 
