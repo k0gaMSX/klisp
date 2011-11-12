@@ -5,7 +5,7 @@ out=/tmp/$$.2
 
 for i in test/*.l; do
     printf "Running test $i "
-    awk '// {if (out == 1) print} /Return/ {out=1}' < $i | sed 's/;//' > $out
+    sed -e '1,/Return/d' -e 's/;//' < $i > $out
     ./kemacs < $i > $in 2> /dev/null 
     diff -w $in $out > /dev/null 2>&1
     if [ $? -ne 0 ]; then
