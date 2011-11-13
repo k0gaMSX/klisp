@@ -200,6 +200,8 @@ static l_object setq(register l_object *args, unsigned char numargs)
 		sym = *args--;
 		if (!SYMBOLP(sym))
 			wrong_type_argument("symbol");
+		if (EQ(sym, tee) || EQ(sym, nil))
+			setting_constant(sym);
 		XBOUND(sym) = val = eval(*args--);
 	} while (numargs -= 2);
 

@@ -91,6 +91,13 @@ void unbound_variable(l_object var)
         error("unbound-variable %s\n", XSYMBOL(var)->name);
 }
 
+
+void setting_constant(l_object k)
+{
+	error("setting-constant %s\n", XSYMBOL(k)->name);
+}
+
+
 void out_of_memory(void)
 {
         fprintf(stderr, "Out of memory\n");
