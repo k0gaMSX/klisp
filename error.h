@@ -31,6 +31,7 @@ void wrong_number_arguments(void);
 void end_of_file(void);
 extern void negative_number(void);
 extern void eof_while_parsing(void);
+extern void let_value_form(void);
 extern void setting_constant(l_object k);
 #endif /* ERROR_H_ */
 

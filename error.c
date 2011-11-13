@@ -41,6 +41,13 @@ static void error(const char *fmt, ...)
 
 /* TODO: change magic numbers by defines */
 
+void let_value_form(void)
+{
+        fprintf(stderr, "let bindings can have only one value-form\n");
+        longjmp(catch_error, 1);
+}
+
+
 void end_of_file(void)
 {
         longjmp(catch_error, 2);

@@ -24,6 +24,14 @@
 #include "error.h"
 #include "lisp.h"
 
+#define STACK_SIZE 128
+#define CTX_SIZE    20
+
+static l_object sym_stack[STACK_SIZE]; /* symbol stack */
+static l_object *ctx_stack[CTX_SIZE];  /* context stack */
+static l_object *stackp = sym_stack;   /* symbol stack pointer */
+static l_object **contextp = ctx_stack;    /* context stack pointer */
+
 
 
 l_object fquote(l_object obj)
@@ -275,6 +283,61 @@ static l_object prog_list(register l_object list)
 }
 
 
+static void pop_context(void)
+{
+	l_object sym, val;
+
+	assert(contextp > ctx_stack);
+
+	for (--contextp; *contextp != stackp; XBOUND(sym) = val) {
+		assert(stackp >= sym_stack + 2);
+		val = *--stackp;
+		sym = *--stackp;
+	}
+}
+
+
+/*
+ * let is a special form
+ *
+ * (let VARLIST BODY...)
+ *
+ * Bind variables according to VARLIST then eval BODY.
+ * The value of the last form in BODY is returned.
+ * Each element of VARLIST is a symbol (which is bound to nil)
+ * or a list (SYMBOL VALUEFORM) (which binds SYMBOL to the value of VALUEFORM).
+ */
+static l_object let(l_object *args, unsigned char numargs)
+{
+	register l_object sym, clause;
+	l_object val, env;
+
+	if (numargs < 2)
+		wrong_number_arguments();
+	if (!CONSP(*args))
+		wrong_type_argument("list");
+	*contextp++ = stackp;
+	for (env = *args--; CONSP(env); env = XCDR(env)) {
+		clause = XCAR(env);
+		if (!CONSP(clause))
+			let_value_form();
+		sym = XCAR(clause);
+		if (!SYMBOLP(sym))
+			wrong_type_argument("symbol");
+		if (EQ(sym, tee) || EQ(sym, nil))
+			setting_constant(sym);
+		clause = XCDR(clause);
+		if (!CONSP(clause))
+			let_value_form();
+		val = XCAR(clause);
+		*stackp++ = sym;
+		*stackp++ = XBOUND(sym);
+		XBOUND(sym) = eval(val);
+	}
+	val = progn(args, --numargs);
+	pop_context();
+	return val;
+}
 
 
 /*
@@ -395,5 +458,6 @@ struct l_builtin eval_funs[] = {
 	DEFMACRO("and", and_fun, 0, MANY),
 	DEFMACRO("defvar", defvar, 0, MANY),
 	DEFMACRO("setq", setq, 0, MANY),
+	DEFMACRO("let", let, 0, MANY),
 	DEFUN(NULL, NULL, 0, 0)
 };
