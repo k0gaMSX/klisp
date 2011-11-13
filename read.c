@@ -216,7 +216,7 @@ unsigned char gettoken(void)
 static l_object read_stream;    /* stream used by read functions */
 
 
-static l_object readobj();
+static l_object readobj(void);
 
 static l_object readlist(void)
 {
@@ -250,7 +250,7 @@ static l_object readlist(void)
 
 
 
-static l_object readobj()
+static l_object readobj(void)
 {
         switch (yytok) {
         case '(':
@@ -294,7 +294,7 @@ void initfuncs(struct l_builtin *fp)
                 static l_symbol *sym;
                 sym = intern_static(fp->name);
                 sym->fbound.type = fp->type;
-                memcpy(&sym->fbound.u.cfun, &fp->cfun, sizeof(fp->cfun));
+		sym->fbound.u.cfun = fp->cfun;
         }
 }
 
